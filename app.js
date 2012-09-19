@@ -21,7 +21,15 @@ function authorize(user, pw) {
   userIsOk |= (user === 'user' && pw === 'password');
   return userIsOk;
 }
-var app  = express.createServer();
+var app  = express();
+var http = require('http');
+var server = http.createServer(app);
+var port = process.env.PORT || 3149;
+server.listen(port);
+var socketio = require('socket.io').listen(server);
+socketio.configure(function () {
+    socketio.set("transports", [ "jsonp-polling", "xhr-polling", "flashsocket", "htmlfile" ]);
+});
 app.use(express.bodyParser());
 app.use(express.cookieParser());
 app.use(express.session({ 
@@ -55,15 +63,13 @@ app.get('/',function(req,res,next){
   req.url = "index.html";
   staticProvider(req, res, next);
 });
-var port = process.env.PORT || 3149;
-app.listen(port); 
  
-var EDITABLE_APPS_DIR = "/APPS/"; 
+var EDITABLE_APPS_DIR = "sandbox/";
 var ENABLE_LAUNCH     = false;
 
 // -----------------------------------------------------
 // for demo clean-up (remove if this gives you problems)
-var REPLACE_SANDBOX_APP_DEMO_FILES = true;
+var REPLACE_SANDBOX_APP_DEMO_FILES = false;
 if(REPLACE_SANDBOX_APP_DEMO_FILES){
   fs.copyF = function (src, dst, cb) {
     function copy(err) {
@@ -418,7 +424,7 @@ app.get("/allUsersEditingProjects", function(req, res){
 // ------------------------------------------------------------
 var localFileIsMostRecent = []; // an array of flags indicating if the file has been modified since last save.
 var nowjs     = require("now");
-var everyone  = nowjs.initialize(app);
+var everyone  = nowjs.initialize(server);
 // ------ REALTIME NOWJS COLLABORATION ------
 //var nowcollab = require("../CHAOS/nowcollab");
 //nowcollab.initialize(nowjs, everyone, true);
