@@ -450,6 +450,7 @@ nowjs.on('connect', function () {
   addUserToFileGroup(this.user, ""); // the blank file group is the the team group.
   this.now.c_confirmProject(this.user.teamID);
 });
+
 nowjs.on('disconnect', function () {
   //console.log("DISCONNECT > "+this.user.clientId+" >> "+this.user.about.name+" <"+this.user.about.email+">"); 
   //console.log("DISCONNECT > "+this.user.clientId+" >> "+this.now.name); 
@@ -464,7 +465,7 @@ nowjs.on('disconnect', function () {
     }
   }
   // finally, remove the user from the team group. (don't need this now since team is also in user.grouplist)
-  teamgroup.now.c_processUserEvent("leave", this.user.clientId, this.now.name);
+//  teamgroup.now.c_processUserEvent("leave", this.user.clientId, this.now.name);
 });
 //---------
 // NOW: Remote collab messages.
