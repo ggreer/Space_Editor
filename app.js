@@ -24,11 +24,9 @@ function authorize(user, pw) {
 var app  = express();
 var http = require('http');
 var server = http.createServer(app);
-var port = process.env.PORT || 3149;
-server.listen(port);
-var socketio = require('socket.io').listen(server);
-socketio.configure(function () {
-    socketio.set("transports", [ "xhr-polling", "jsonp-polling", "flashsocket", "htmlfile", "websocket" ]);
+var io = require('socket.io').listen(server);
+io.configure(function () {
+    io.set("transports", [ "htmlfile", "xhr-polling", "jsonp-polling", "flashsocket" ]);
 });
 app.use(express.bodyParser());
 app.use(express.cookieParser());
@@ -66,6 +64,8 @@ app.get('/',function(req,res,next){
  
 var EDITABLE_APPS_DIR = "sandbox/";
 var ENABLE_LAUNCH     = false;
+var port = process.env.PORT || 3149;
+server.listen(port);
 
 // -----------------------------------------------------
 // for demo clean-up (remove if this gives you problems)
@@ -422,7 +422,7 @@ app.get("/allUsersEditingProjects", function(req, res){
 // ------------------------------------------------------------
 var localFileIsMostRecent = []; // an array of flags indicating if the file has been modified since last save.
 var nowjs     = require("now");
-var everyone  = nowjs.initialize(server);
+var everyone  = nowjs.initialize(server, {socketio: {"transports": [ "htmlfile", "xhr-polling", "jsonp-polling", "flashsocket" ]}});
 // ------ REALTIME NOWJS COLLABORATION ------
 //var nowcollab = require("../CHAOS/nowcollab");
 //nowcollab.initialize(nowjs, everyone, true);
