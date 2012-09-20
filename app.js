@@ -28,13 +28,13 @@ var port = process.env.PORT || 3149;
 server.listen(port);
 var socketio = require('socket.io').listen(server);
 socketio.configure(function () {
-    socketio.set("transports", [ "jsonp-polling", "xhr-polling", "flashsocket", "htmlfile" ]);
+    socketio.set("transports", [ "xhr-polling", "jsonp-polling", "flashsocket", "htmlfile", "websocket" ]);
 });
 app.use(express.bodyParser());
 app.use(express.cookieParser());
 app.use(express.session({ 
   secret: "a very secret secret",
-  store:  new express.session.MemoryStore,  
+  store:  new express.session.MemoryStore(),
   cookie: {  
     path     : '/',
     httpOnly : true,
@@ -73,10 +73,8 @@ var REPLACE_SANDBOX_APP_DEMO_FILES = false;
 if(REPLACE_SANDBOX_APP_DEMO_FILES){
   fs.copyF = function (src, dst, cb) {
     function copy(err) {
-      var is
-        , os
-        ;
-  
+      var is, os;
+
       if (!err) {
         return cb(new Error("File " + dst + " exists."));
       }
@@ -432,7 +430,7 @@ var everyone  = nowjs.initialize(server);
 nowjs.on('connect', function () { 
   //console.log("CONNECT    > " + this.user.clientId);
   this.user.teamID      = teamID;
-  if(this.now.teamID != ''){
+  if(this.now.teamID !== ''){
     this.user.teamID = this.now.teamID;
   }
   //console.log(this.user);
@@ -750,7 +748,7 @@ function localRepoFetchGitLog(userObj, gitRepoPath, fname, fetcherCallback) {
       var out = [];
       for(var i=0; i<logLines.length; i++){
         var line = logLines[i];
-        if(line.indexOf("commit") == 0){
+        if(line.indexOf("commit") === 0){
           // new entry.. first check if we've hit max entries
           if(out.length >= maxResults){
             break;
@@ -760,22 +758,22 @@ function localRepoFetchGitLog(userObj, gitRepoPath, fname, fetcherCallback) {
           saveThisEntry = true;
         }
         if(saveThisEntry){
-          if(line.indexOf("aname") == 0){
+          if(line.indexOf("aname") === 0){
             out[out.length-1]['auth_name'] = line.substring(8);
           }
-          if(line.indexOf("amail") == 0){
+          if(line.indexOf("amail") === 0){
             out[out.length-1]['auth_email'] = line.substring(8);
           }
-          if(line.indexOf("rdate") == 0){
+          if(line.indexOf("rdate") === 0){
             out[out.length-1]['time_relative'] = line.substring(8);
           }
-          if(line.indexOf("utime") == 0){
+          if(line.indexOf("utime") === 0){
             out[out.length-1]['time_epoch'] = line.substring(8);
           }
-          if(line.indexOf("cnote") == 0){
+          if(line.indexOf("cnote") === 0){
             var comment = line.substring(8);
             out[out.length-1]['comment'] = comment;
-            if(filter != null){
+            if(filter !== null){
               if(comment.indexOf(filter) < 0){
                 out.pop();
                 saveThisEntry = false;
@@ -1141,7 +1139,10 @@ var Utf8 = {
   decode : function (utftext) { // public method for url decoding
     var string = "";
     var i = 0;
-    var c = c1 = c2 = 0;
+    var c;
+    var c1;
+    var c2;
+    c = c1 = c2 = 0;
     while ( i < utftext.length ) {
       c = utftext.charCodeAt(i);
       if (c < 128) {
@@ -1162,7 +1163,7 @@ var Utf8 = {
     }
     return string;
   }
-}
+};
 
 function occurrences(string, substring){
   var n=0;
