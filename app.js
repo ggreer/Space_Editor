@@ -61,7 +61,19 @@ app.get('/',function(req,res,next){
   req.url = "index.html";
   staticProvider(req, res, next);
 });
- 
+
+app.post('/patch', function(req, res) {
+  var path = req.body.path;
+  var patches = req.body.patches;
+  var md5 = req.body.md5;
+  console.log(req.body);
+  this.user = everyone.users[0];
+  console.log(patches);
+  everyone.now.s_sendDiffPatchesToCollaborators(path, patches, md5);
+  res.send("Cool", 200);
+});
+
+
 var EDITABLE_APPS_DIR = "sandbox/";
 var ENABLE_LAUNCH     = false;
 var port = process.env.PORT || 3149;

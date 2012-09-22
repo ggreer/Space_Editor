@@ -117,7 +117,7 @@ var nowClientID                = 0;
 var allCollabInfo              = [];
 var initialStateIsWelcome      = true;
 var alreadyRequestedRemoteFile = false;
-var TIME_UNTIL_GONE            = 7000;
+var TIME_UNTIL_GONE            = 30000;
 var NOTIFICATION_TIMEOUT       = 10000;
 var autoCheckStep              = 0;
 function ifOnlineLetCollaboratorsKnowImHere(){
@@ -314,11 +314,11 @@ var updateWithDiffPatchesLocal = function(id, patches, md5){
     doc.applyDeltas(aceDeltas);
     previousText = newText;
     ignoreAceChange = false;
-    
+    var DISABLE_MD5 = true;
     if(!localChangeJustSent && (t - timeOfLastLocalChange) > 2000){
       //console.log("no local changes have been made in a couple seconds >> md5 should match..");
       var newMD5 = Crypto.MD5(newText);
-      if(md5 == newMD5){
+      if(DISABLE_MD5 || md5 == newMD5){
         setFileStatusIndicator("changed");
       }else{
         setFileStatusIndicator("error");
@@ -333,6 +333,7 @@ var updateWithDiffPatchesLocal = function(id, patches, md5){
           var patch_text = dmp.patch_toText(patch_list);
           var patches    = dmp.patch_fromText(patch_text);
           var md5        = Crypto.MD5(fdata);
+          console.log(patches);
           updateWithDiffPatchesLocal(id, patches, md5);
         });
       }
@@ -541,6 +542,7 @@ function sendTextChange(){
   var patch_list = dmp.patch_make(previousText, currentText);
   var patch_text = dmp.patch_toText(patch_list);
   var patches    = dmp.patch_fromText(patch_text);
+  console.log(patches);
   previousText   = currentText;
   timeOfLastLocalChange = (new Date()).getTime();
   now.s_sendDiffPatchesToCollaborators(infile, patches, md5);
