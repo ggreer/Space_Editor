@@ -431,7 +431,12 @@ app.get("/allUsersEditingProjects", function(req, res){
 // ------------------------------------------------------------
 var localFileIsMostRecent = []; // an array of flags indicating if the file has been modified since last save.
 var nowjs     = require("now");
-var everyone  = nowjs.initialize(server, {socketio: {"transports": [ "websocket", "htmlfile", "xhr-polling", "jsonp-polling", "flashsocket" ]}});
+var everyone  = nowjs.initialize(server, {
+    socketio: {
+        "transports": [ "websocket", "xhr-polling", "jsonp-polling" ],
+        "log level": 3
+    }
+});
 // ------ REALTIME NOWJS COLLABORATION ------
 //var nowcollab = require("../CHAOS/nowcollab");
 //nowcollab.initialize(nowjs, everyone, true);
