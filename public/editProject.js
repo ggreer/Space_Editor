@@ -119,10 +119,11 @@ var mostRecentFilesAndInfo   = [];
 var mostRecentTotalUserCount = 1;
 function safelyOpenFileFromEntry(el){
   var fname = $(el).attr('fname');
-  if(fname != undefined && fname != null && fname != ""){
+  var divToPopulate;
+  if(fname !== undefined && fname !== null && fname !== ""){
     console.log("SAFELY OPENING FILE: " + fname);
     console.log("TODO: make sure file is saved before opening over it...");
-    var divToPopulate = $(".paneScreenSelected");
+    divToPopulate = $(".paneScreenSelected");
     if(divToPopulate.length > 0){
       divToPopulate = $(divToPopulate[0]).parents(".editPane");
       console.log(divToPopulate);
@@ -133,7 +134,7 @@ function safelyOpenFileFromEntry(el){
     console.log("output log disabled for demo.");
     return;
     console.log("Undefined filename... showing log.");
-    var divToPopulate = $(".paneScreenSelected");
+    divToPopulate = $(".paneScreenSelected");
     if(divToPopulate.length > 0){
       divToPopulate = $(divToPopulate[0]).parents(".editPane");
       console.log(divToPopulate);
@@ -204,11 +205,11 @@ function getProjectFileInfo(fname){
 // ---------------------------------------------------------
 var fileBrowserIsOpen = false;
 var fileBrowserMouseDownFn = function(event){
-  if($(event.target).attr('id') != "fileBrowser" && $(event.target).parents("#fileBrowser").length == 0 && $(event.target).attr('id') != "filebrowserButton"){
+  if($(event.target).attr('id') !== "fileBrowser" && $(event.target).parents("#fileBrowser").length === 0 && $(event.target).attr('id') !== "filebrowserButton"){
     $(document).unbind('mousedown', fileBrowserMouseDownFn);
     closeFileBrowser();
   }
-}
+};
 function updateFileBrowserFromFileList(filesAndInfo){
   mostRecentFilesAndInfo = filesAndInfo;
   var mediaHTML = "";
@@ -224,7 +225,7 @@ function updateFileBrowserFromFileList(filesAndInfo){
     var sz = fInfo[2] || 0;
     var td = fInfo[3] || 0;
     var fm = fInfo[4] || 0;
-    if(f == ""){
+    if(f === ""){
       // this is the total number of users. Update and remove from file list.
       mostRecentTotalUserCount = u;
       filesAndInfo.splice(i, 1);
@@ -278,7 +279,7 @@ function updateFileBrowserFromFileList(filesAndInfo){
   $.conmenu({
       selector: ".fileEntry",
       choices: [{
-        label: "<div class='rightClickCornerCut'></div>",
+        label: "<div class='rightClickCornerCut'></div>"
       },
     {
         label: "<div class='rightClickItemEl'>Duplicate</div>",
@@ -372,12 +373,12 @@ function createNewFileFromInputs(){
     return;
   }
   $("#newfileInputName").parent().html("New File...");
-  if(newfname.length == 0){
+  if(newfname.length === 0){
     return;
   }
   var newFilename = newfname + newftype;
   console.log("Requesting file creation: " + newFilename);
-  if(newFilename != ""){
+  if(newFilename !== ""){
     $.post("/createFile?project="+PROJECT, {fname: newFilename}, function(data){
       if(data && data.indexOf("FAIL") !== 0){
         shoutCreatedFile(data);
@@ -402,11 +403,11 @@ function deleteFile(fname){
 // ---------------------------------------------------------
 var preShiftShiftFocusElement = null;
 var shiftShiftMouseDownFn = function(event){
-  if($(event.target).attr('id') != "shiftshift" && $(event.target).parents("#shiftshift").length == 0 && $(event.target).parents("#topMenu").length == 0){
+  if($(event.target).attr('id') !== "shiftshift" && $(event.target).parents("#shiftshift").length === 0 && $(event.target).parents("#topMenu").length === 0){
     $(document).unbind('mousedown', shiftShiftMouseDownFn);
     closeShiftShift();
   }
-}
+};
 function toggleShiftShift(){
   if($("#shiftshift").is(":visible")){
     closeShiftShift();
@@ -437,25 +438,22 @@ function shiftshiftBroadcastKeydown(event){
   if(event.keyCode == 13){
     // ENTER was pressed
     var txt = $("#shiftshiftInputDiv input").val();
-    if(txt != ""){
+    if(txt !== ""){
       var usedAsCommand = false;
       if(txt.length == 1){
         switch(txt.toLowerCase()){
-          case "f":{
+          case "f":
             toggleFileBrowser();
             usedAsCommand = true;
             break;
-          }
-          case "l":{
+          case "l":
             toggleLog();
             usedAsCommand = true;
             break;
-          }
-          case "o":{
+          case "o":
             toggleLogOutput();
             usedAsCommand = true;
             break;
-          }
         }
       }
       if(!usedAsCommand){
@@ -480,7 +478,7 @@ function shiftshiftRenameKeydown(event, fname){
   if(event.keyCode == 13){
     // ENTER was pressed
     var txt = $("#shiftshiftInputDiv input").val();
-    if(txt != ""){
+    if(txt !== ""){
       $.post("/renameFile?project="+PROJECT, {fname: fname, newfname: txt}, function(data){
         if(data && data.indexOf("FAIL") !== 0){
           console.log("I just renamed the file. > " + fname + " to " + data);
@@ -496,11 +494,11 @@ function shiftshiftRenameKeydown(event, fname){
   }
 }
 function shiftshiftDuplicateKeydown(event, fname){
-  if(event.keyCode == 13){
+  if(event.keyCode === 13){
     // ENTER was pressed
     var txt = $("#shiftshiftInputDiv input").val();
-    if(txt != ""){
-      if(getUsersInFile(fname) != 0){
+    if(txt !== ""){
+      if(getUsersInFile(fname) !== 0){
         alert("cannot duplicate file, there are still users editing it!");
         return;
       }
@@ -572,9 +570,9 @@ function openShiftShiftAsDelete(fname){
   $("#shiftshiftInputDiv input").val("").focus();
 }
 function openShiftShiftAsCommit(){
+  var html = "";
   alert("FAIL: Sorry but committing projects is currently disabled.");
   return;
-  var html = "";
   html += "<div id='shiftshiftTitle'>COMMIT</div>";
   html += "<div id='shiftshiftFilename'><span>Notes...</span></div>";
   html += "<div id='shiftshiftInputDiv'><input type='text' onkeydown='return shiftshiftCommitKeydown(event);'/></div>";
@@ -718,11 +716,11 @@ function setURLHashVariable(variable, value){
   console.log(query);
   var vars = query.split("&"); 
   for (var i=0;i<vars.length;i++) { 
-    if(vars[i] == ""){
+    if(vars[i] === ""){
       continue;
     }
     var pair = vars[i].split("="); 
-    if (pair[0].toLowerCase() == variable.toLowerCase()) { 
+    if (pair[0].toLowerCase() === variable.toLowerCase()) { 
       pair[1] = value;
       console.log("replaced value: " + pair[0]);
       replacedExistingVar = true;
@@ -744,7 +742,7 @@ function getURLHashVariable(variable){
   var query = window.location.hash.substring(1); 
   var vars = query.split("&"); 
   for (var i=0;i<vars.length;i++) { 
-    if(vars[i] == ""){
+    if(vars[i] === ""){
       continue;
     }
     var pair = vars[i].split("="); 
@@ -826,10 +824,10 @@ $(window).ready(function() {
    PROJECT = getProject;
   }
   document.title = PROJECT;
-  populateEditPane($("#pane_0"), "public/index.less");
-  populateEditPane($("#pane_1"), "app.js");
+  populateEditPane($("#pane_0"), "");
+  populateEditPane($("#pane_1"), "public/index.less");
   //populateEditPane($("#pane_2"), "");
-  populateEditPane($("#pane_2"), "public/index.js"); 
+  populateEditPane($("#pane_2"), ""); 
   
   $(".join").each(function(index, el){
     setupJoin(el);
@@ -854,8 +852,7 @@ $(window).ready(function() {
     }
   });
   */
-  
-  setTimeout(function(){alert("\nWelcome to Space!\n\nSpace is a real-time, collaborative code editor created by the Chaos Collective.\n\nWhen other users are online, you'll see their cursors directly in the code. Click the button at the bottom left to open the file browser and see where users are.\n\nGo forth, explore Space, and write some code with your friends!")}, 5000);
+
 });
 
 
