@@ -24,10 +24,7 @@ function authorize(user, pw) {
 var app  = express();
 var http = require('http');
 var server = http.createServer(app);
-var io = require('socket.io').listen(server);
-io.configure(function () {
-    io.set("transports", [ "htmlfile", "xhr-polling", "jsonp-polling", "flashsocket" ]);
-});
+
 app.use(express.bodyParser());
 app.use(express.cookieParser());
 app.use(express.session({ 
@@ -434,7 +431,7 @@ app.get("/allUsersEditingProjects", function(req, res){
 // ------------------------------------------------------------
 var localFileIsMostRecent = []; // an array of flags indicating if the file has been modified since last save.
 var nowjs     = require("now");
-var everyone  = nowjs.initialize(server, {socketio: {"transports": [ "htmlfile", "xhr-polling", "jsonp-polling", "flashsocket" ]}});
+var everyone  = nowjs.initialize(server, {socketio: {"transports": [ "websocket", "htmlfile", "xhr-polling", "jsonp-polling", "flashsocket" ]}});
 // ------ REALTIME NOWJS COLLABORATION ------
 //var nowcollab = require("../CHAOS/nowcollab");
 //nowcollab.initialize(nowjs, everyone, true);
